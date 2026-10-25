@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free iCloud & FRP Check - RepairDesk</title>
+<style>
+body{background:#0a0a0f;color:white;font-family:system-ui;padding:20px;text-align:center}
+.card{background:#17171f;border:1px solid #2a2a3a;border-radius:16px;padding:20px;max-width:400px;margin:20px auto}
+input{width:100%;padding:14px;border-radius:10px;background:#0f0f17;border:1px solid #444;color:white;margin:10px 0;box-sizing:border-box;text-align:center;font-size:16px}
+button{width:100%;padding:14px;border-radius:10px;border:none;font-weight:bold;margin:6px 0;cursor:pointer}
+.orange{background:#f59e0b;color:black}
+.blue{background:#4f46e5;color:white}
+.green{background:#16a34a;color:white}
+small{color:#888}
+</style>
+</head>
+<body>
+<h2>🔓 Free IMEI Check</h2>
+<p><small>Check iCloud ON/OFF & FRP Status</small></p>
+
+<div class="card">
+<input id="imei" placeholder="Enter IMEI (dial *#06#)" maxlength="15">
+<button class="orange" onclick="checkIcloud()">Check iCloud ON/OFF (iFree)</button>
+<button class="blue" onclick="checkFRP()">Check FRP / Samsung</button>
+<button class="green" onclick="checkModel()">Check Phone Model</button>
+
+<div id="result" style="margin-top:15px;text-align:left"></div>
+</div>
+
+<p><small>Your shop: RepairDesk Global<br>Powered by iFree & IMEI.info</small></p>
+
+<script>
+function checkIcloud(){
+  const imei = document.getElementById('imei').value.trim();
+  if(imei.length<15) return alert('Enter 15 digits - dial *#06# on phone');
+  document.getElementById('result').innerHTML = `
+    <div style="background:#111;padding:12px;border-radius:8px;border-left:3px solid #f59e0b">
+    <b>IMEI: ${imei}</b><br><br>
+    ✅ <a href="https://ifreeicloud.co.uk/free-check/${imei}" target="_blank" style="color:#f59e0b"><b>CLICK TO SEE iCloud ON/OFF →</b></a><br>
+    <small>If shows ON = iCloud Locked, OFF = Clean</small><br><br>
+    🔗 <a href="https://ifreeicloud.co.uk/free-check?imei=${imei}" target="_blank" style="color:white">Backup Link</a>
+    </div>
+  `;
+}
+function checkFRP(){
+  const imei = document.getElementById('imei').value.trim();
+  if(imei.length<15) return alert('Enter IMEI');
+  document.getElementById('result').innerHTML = `
+    <div style="background:#111;padding:12px;border-radius:8px;border-left:3px solid #4f46e5">
+    <b>FRP / Google Lock Check</b><br><br>
+    <a href="https://imei.info/?imei=${imei}" target="_blank" style="color:#60a5fa"><b>Check on IMEI.info →</b></a><br><br>
+    <small>For Samsung FRP: Settings > Need IMEI. FRP status shows after factory reset.</small><br>
+    <a href="https://www.google.com/search?q=FRP+check+${imei}" target="_blank" style="color:#aaa">Google Search IMEI</a>
+    </div>
+  `;
+}
+function checkModel(){
+  const imei = document.getElementById('imei').value.trim();
+  if(imei.length<15) return alert('Enter IMEI');
+  window.open(`https://imei.info/?imei=${imei}`,'_blank');
+}
+</script>
+</body>
+</html>
