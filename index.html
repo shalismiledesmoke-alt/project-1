@@ -1,48 +1,58 @@
-<meta name="description" content="Free offline IMEI checker - check if IMEI is valid 15 digits">
-<meta name="keywords" content="IMEI checker, IMEI validator, Ghana IMEI check">
-<meta name="google-site-verification" content="">
-<title>IMEI Checker - Free Valid IMEI Tool</title>15<!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IMEI Checker</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="5ZYX28dn7MoreUZg6hFdFnG0AqjyeCayELTGD-C71mo" />
+<meta name="description" content="Free IMEI checker - Offline Tool - Validates 15-digit IMEI using Luhn algorithm. No data sent online.">
+<meta name="keywords" content="IMEI checker, IMEI validator, check IMEI Ghana, free IMEI tool">
+<title>IMEI Checker - Offline Tool</title>
 <style>
-body{background:#000;color:#fff;font-family:system-ui;padding:12px}
-.box{background:#111;border:1px solid #333;border-radius:16px;padding:16px;margin-top:20px}
-input{width:100%;padding:14px;border-radius:10px;border:none;background:#222;color:#fff;font-size:18px;letter-spacing:2px;text-align:center;box-sizing:border-box}
-button{width:100%;padding:14px;margin-top:12px;border-radius:10px;border:none;background:#22c55e;color:#000;font-weight:900;font-size:16px}
-.result{margin-top:14px;padding:12px;border-radius:10px;text-align:center;font-weight:700;display:none}
-.ok{background:#14532d;color:#86efac;display:block}
-.bad{background:#7f1d1d;color:#fca5a5;display:block}
-small{color:#888}
+body{background:#0a0a0a;color:white;font-family:Arial;padding:15px;margin:0}
+h2{margin:10px 0 5px 0}
+.box{background:#1e1e1e;padding:15px;border-radius:12px;border:1px solid #333}
+input{width:100%;padding:14px;border-radius:8px;border:none;background:#2a2a2a;color:white;text-align:center;font-size:18px;letter-spacing:2px;box-sizing:border-box}
+button{width:100%;padding:14px;margin-top:10px;border-radius:8px;border:none;background:#22c55e;color:black;font-weight:bold;font-size:16px;cursor:pointer}
+#result{margin-top:10px;padding:12px;border-radius:8px;text-align:center;font-weight:bold;display:none}
+.valid{background:#14532d;color:#bbf7d0}
+.invalid{background:#7f1d1d;color:#fecaca}
+small{color:#aaa;display:block;margin-top:10px;line-height:1.5}
 </style>
 </head>
 <body>
+15
 <h2>project-1</h2>
 <p>IMEI checker - Offline Tool</p>
 <div class="box">
-<input id="imei" placeholder="Enter 15-digit IMEI" maxlength="15" inputmode="numeric">
-<button onclick="check()">CHECK IMEI</button>
-<div id="res" class="result"></div>
-<small>• Checks Luhn algorithm only<br>• Does not unlock or bypass anything</small>
+<input id="imei" type="text" inputmode="numeric" placeholder="Enter 15-digit IMEI" maxlength="15">
+<button onclick="checkIMEI()">CHECK IMEI</button>
+<div id="result"></div>
+<small>• Checks Luhn algorithm only<br>• Does not unlock or bypass anything<br>• 100% offline - no data sent</small>
 </div>
 
 <script>
-function luhnCheck(num){
+function checkIMEI(){
+ const imei=document.getElementById('imei').value.trim();
+ const res=document.getElementById('result');
+ res.style.display='block';
+ if(!/^\d{15}$/.test(imei)){
+   res.className='invalid';
+   res.innerHTML='❌ Invalid: Must be 15 digits';
+   return;
+ }
  let sum=0;
  for(let i=0;i<15;i++){
-  let d=parseInt(num[14-i]);
-  if(i%2==1){d*=2; if(d>9)d-=9;}
-  sum+=d;
+   let d=parseInt(imei[i]);
+   if((15-i)%2===0){d*=2; if(d>9)d-=9;}
+   sum+=d;
  }
- return sum%10==0;
-}
-function check(){
- const v=document.getElementById('imei').value.trim();
- const r=document.getElementById('res');
- if(!/^\d{15}$/.test(v)){ r.className='result bad'; r.textContent='❌ Invalid: Must be 15 digits'; return;}
- if(luhnCheck(v)){ r.className='result ok'; r.textContent='✅ Valid IMEI format';}
- else{ r.className='result bad'; r.textContent='❌ Invalid IMEI (Luhn failed)';}
+ if(sum%10===0){
+   res.className='valid';
+   res.innerHTML='✅ Valid IMEI - Luhn check passed';
+ } else {
+   res.className='invalid';
+   res.innerHTML='❌ Invalid IMEI - Luhn check failed';
+ }
 }
 </script>
 </body>
