@@ -1,77 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iCloud & IMEI Check Pro - RepairDesk</title>
+<title>RepairDesk Global - Pro</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-body{background:#07070a;color:white;margin:0;padding:16px;min-height:100vh}
-.phone{max-width:420px;margin:0 auto}
-.header{background:linear-gradient(135deg,#1c1c25,#12121a);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:18px;display:flex;justify-content:space-between;align-items:center}
-.header h1{font-size:24px;margin:0;line-height:1.1}
-.badge{border:1px solid #f5c86e;background:linear-gradient(135deg,#2a2310,#1a160a);color:#f5c86e;padding:6px 14px;border-radius:12px;font-weight:bold;font-size:12px}
-.card{background:linear-gradient(135deg,#1a1a26, #15151f);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:18px;margin-top:16px;backdrop-filter:blur(20px);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
-.label{font-weight:bold;font-size:18px;margin-bottom:12px}
-.input-wrap{background:#0f0f17;border:1px solid rgba(255,255,255,0.1);border-radius:16px;display:flex;align-items:center;padding:0 14px}
-.input-wrap input{flex:1;background:transparent;border:none;padding:16px 10px;color:white;font-size:18px;outline:none;letter-spacing:1px}
-.checkBtn{width:100%;margin-top:16px;background:linear-gradient(90deg,#7c5cff,#4fc3ff);border:none;border-radius:16px;padding:16px;font-size:20px;font-weight:bold;color:white;box-shadow:0 8px 20px rgba(124,92,255,0.4)}
-.result-header{display:flex;justify-content:space-between;align-items:center}
-.result-main{background:linear-gradient(135deg,#1e2a1e,#152015);border:1px solid rgba(34,197,94,0.3);border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px;color:#22c55e;font-weight:bold;margin-top:10px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,0.08);border-radius:14px;overflow:hidden;margin-top:12px}
-.grid-item{background:#1f1f2b;padding:12px;font-size:12px}
-.grid-item b{display:block;font-size:13px;margin-bottom:2px}
-.green{color:#22c55e} .red{color:#ef4444} .blue{color:#60a5fa}
-.device{background:#d1d1d6;color:#1a1a2e;border-radius:16px;padding:12px;margin-top:12px;font-size:14px;line-height:2}
-.save{margin-top:12px;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:12px;font-size:12px;color:#999}
-.save button{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.1);color:white;padding:6px 12px;border-radius:8px}
-a{color:inherit;text-decoration:none}
-.hint{font-size:12px;color:#888;margin-top:8px}
+body{background:#0a0a0f;color:white;font-family:system-ui;padding:15px;margin:0}
+.card{background:#17171f;border:1px solid #2a2a3a;border-radius:14px;padding:15px;margin-bottom:15px}
+input,select{width:100%;padding:12px;margin:6px 0;border-radius:10px;background:#0f0f17;border:1px solid #333;color:white;box-sizing:border-box}
+button{padding:12px;border-radius:10px;border:none;font-weight:bold;cursor:pointer}
+.gold{background:linear-gradient(135deg,#1a1a00,#332a00);border:1px solid #665500}
+.blue{background:#4f46e5;color:white;width:100%;margin-top:10px}
+.orange{background:#f59e0b;color:black}
+.green{background:#16a34a;color:white;width:100%}
+.profit{color:#22c55e;font-weight:bold;margin:8px 0}
+.tab{display:flex;gap:8px;margin-bottom:12px}
+.tab button{flex:1;background:#222;color:#888}
+.tab button.active{background:#4f46e5;color:white}
 </style>
 </head>
 <body>
-<div class="phone">
-<div class="header"><h1>iCloud & IMEI<br>Check</h1><div class="badge">💎 PRO</div></div>
-<p class="hint">Professional IMEI & iCloud check for repair shop • Fast • Secure • Accurate</p>
+<h2>🔧 RepairDesk Global PRO</h2>
+
+<div class="card gold">
+  🔔 <b>Live Visits</b> <span id="visitCount"></span>
+  <div id="visits" style="margin-top:8px;font-size:12px;color:#aaa"></div>
+</div>
+
+<div class="tab">
+  <button id="btnJob" class="active" onclick="showTab('job')">Add Job</button>
+  <button id="btnCheck" onclick="showTab('check')">iCloud / FRP Check</button>
+</div>
+
+<div id="tab-job" class="card">
+  <h3>Add Job + Auto Profit</h3>
+  <input id="customer" placeholder="Customer Name">
+  <input id="phone" placeholder="Phone">
+  <input id="model" placeholder="Model e.g iPhone 12">
+  <input id="imei" placeholder="IMEI (for iCloud check)">
+  <div style="display:flex;gap:8px">
+    <select id="issue"><option>FRP Lock</option><option>iCloud Lock</option><option>Screen</option><option>Battery</option><option>Unlock</option></select>
+    <select id="status"><option>Received</option><option>Repairing</option><option>Ready</option><option>Delivered</option></select>
+  </div>
+  <div style="display:flex;gap:8px">
+    <input id="price" type="number" placeholder="Price $" oninput="calcProfit()">
+    <input id="cost" type="number" placeholder="Cost $" oninput="calcProfit()">
+  </div>
+  <div id="profitDisplay" class="profit"></div>
+  <button class="blue" onclick="addJob()">+ Add Job</button>
+</div>
+
+<div id="tab-check" class="card" style="display:none">
+  <h3>🔓 Free iCloud & FRP Check</h3>
+  <input id="checkImei" placeholder="Enter IMEI - dial *#06#">
+  <div id="checkResult" style="margin:10px 0"></div>
+  <button class="orange" onclick="doCheck('icloud')">Check iCloud ON/OFF (iFree)</button>
+  <button class="blue" style="margin-top:6px" onclick="doCheck('frp')">Check FRP / Model</button>
+  <button class="green" style="margin-top:6px" onclick="doCheck('full')">Full Check (All Links)</button>
+  <p style="color:#666;font-size:11px;margin-top:10px">This uses iFree free check + IMEI.info - No API key needed</p>
+</div>
 
 <div class="card">
-<div class="label">Enter IMEI</div>
-<div class="input-wrap">🔍 <input id="imei" placeholder="35814210 123456 7" maxlength="15" inputmode="numeric"></div>
-<div class="hint">15-digit IMEI • Dial *#06# on the device</div>
-<button class="checkBtn" onclick="check()">✨ Check IMEI</button>
-<div id="out"></div>
+  <input id="search" placeholder="🔍 Search jobs..." oninput="searchJobs()">
+  <div id="jobsList" style="margin-top:10px"></div>
 </div>
 
-<div id="resultCard" class="card" style="display:none">
-<div class="result-header"><b style="font-size:18px">Result • <span id="rModel">iPhone</span></b> 🍎</div>
-<div class="result-main">✅ iCloud: <span id="rIcloud">OFF • Unlocked</span></div>
-<div class="grid">
-<div class="grid-item">🛡️ <b>iCloud Status</b><span id="rIcloud2" class="green">OFF — Unlocked</span></div>
-<div class="grid-item">🔒 <b>FRP Status</b><span id="rFRP" class="green">Not Active</span></div>
-<div class="grid-item">🛡️ <b>Blacklist</b><span id="rBlack" class="blue">Clean</span></div>
-<div class="grid-item">🛡️ <b>SimLock</b><span id="rSim" class="blue">Clean • Not Reported</span></div>
-</div>
-<div class="device">
-📞 Model: <span id="dModel">Check via link below</span><br>
-💾 <a id="link1" target="_blank" style="color:#4f46e5;font-weight:bold">→ View on iFree (ON/OFF) - CLICK HERE</a><br>
-📋 <a id="link2" target="_blank" style="color:#7c5cff;font-weight:bold">→ View Full Info on IMEI.info</a>
-</div>
-<div class="save"><span id="time">Checked: now</span><button onclick="save()">Save Report ⬇️</button></div>
-</div>
-
-</div>
 <script>
-function check(){
-  const imei = document.getElementById('imei').value.trim();
-  if(imei.length<14){alert('Enter 15 digits');return;}
-  document.getElementById('resultCard').style.display='block';
-  document.getElementById('rModel').innerText='IMEI '+imei.slice(-4);
-  document.getElementById('link1').href=`https://ifreeicloud.co.uk/free-check/${imei}`;
-  document.getElementById('link2').href=`https://imei.info/?imei=${imei}`;
-  document.getElementById('time').innerText='Checked: '+new Date().toLocaleString();
-  document.getElementById('out').innerHTML=`<div style="margin-top:12px;color:#22c55e">✅ IMEI Ready - Click links below to see live result from iFree</div>`;
-  window.scrollTo(0,document.body.scrollHeight);
+// KEEP YOUR OLD KEYS - COPY FROM YOUR OLD FILE!
+const supabaseUrl = 'https://YOUR_OLD_URL.supabase.co'; 
+const supabaseKey = 'YOUR_OLD_ANON_KEY';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+function showTab(t){
+  document.getElementById('tab-job').style.display = t=='job'?'block':'none';
+  document.getElementById('tab-check').style.display = t=='check'?'block':'none';
+  document.getElementById('btnJob').className = t=='job'?'active':'';
+  document.getElementById('btnCheck').className = t=='check'?'active':'';
 }
-function save(){ alert('Screenshot this page to save report for customer!'); }
+function calcProfit(){
+  const p=parseFloat(price.value)||0,c=parseFloat(cost.value)||0;
+  profitDisplay.innerText = p?`Profit: $${(p-c).toFixed(2)} | Margin: ${p?((p-c)/p*100).toFixed(0):0}%`:'';
+}
+function doCheck(type){
+  const imei = (document.getElementById('checkImei').value || document.getElementById('imei').value).trim();
+  if(imei.length<15) return alert('Enter 15-digit IMEI');
+  let html = `<div style="background:#111;padding:12px;border-radius:8px;border-left:3px solid #f59e0b"><b>IMEI: ${imei}</b><br><br>`;
+  if(type=='icloud' || type=='full'){
+    html += `🔓 <a href="https://ifreeicloud.co.uk/free-check/${imei}" target="_blank" style="color:#f59e0b;font-weight:bold">iCloud ON/OFF Result (iFree) →</a><br><small>ON=Locked, OFF=Clean</small><br><br>`;
+  }
+  if(type=='frp' || type=='full'){
+    html += `📱 <a href="https://imei.info/?imei=${imei}" target="_blank" style="color:#60a5fa">Check Model + FRP Info →</a><br><br>`;
+    html += `🔍 <a href="https://www.imei.org/?imei=${imei}" target="_blank" style="color:#a78bfa">Second Check →</a><br>`;
+  }
+  html+=`</div>`;
+  document.getElementById('checkResult').innerHTML=html;
+  supabase.from('visits').insert([{email:`CHECK-${type}-${imei}`, created_at:new Date()}]);
+}
+async function addJob(){ /* your old addJob code - keep same logic */ 
+  const job={customer:customer.value,phone:phone.value,model:model.value,imei:imei.value||checkImei.value,issue:issue.value,status:status.value,price:parseFloat(price.value)||0,cost:parseFloat(cost.value)||0,profit:(parseFloat(price.value)||0)-(parseFloat(cost.value)||0)};
+  if(!job.customer) return alert('Need customer');
+  const {error}=await supabase.from('jobs').insert([job]); if(error) alert(error.message); else{alert('Job Added!'); loadJobs();}
+}
+async function loadJobs(){ const {data}=await supabase.from('jobs').select('*').order('created_at',{ascending:false}).limit(30); if(data) renderJobs(data); }
+function renderJobs(data){ jobsList.innerHTML=data.map(j=>`<div style="background:#111;padding:10px;border-radius:8px;margin-bottom:6px;border-left:3px solid ${j.status=='Delivered'?'#22c55e':'#f59e0b'}"><b>${j.customer}</b> - ${j.model} <small>(${j.status})</small><br><small>${j.phone} | ${j.issue} | IMEI:${j.imei||''} | Profit:$${j.profit}</small></div>`).join(''); }
+async function searchJobs(){ const q=search.value.toLowerCase(); const {data}=await supabase.from('jobs').select('*'); if(data) renderJobs(data.filter(j=>JSON.stringify(j).toLowerCase().includes(q))); }
+async function loadVisits(){ const {data}=await supabase.from('visits').select('*').order('created_at',{ascending:false}).limit(10); if(data){ visits.innerHTML=data.map(v=>`• ${v.email} - ${new Date(v.created_at).toLocaleString()}`).join('<br>'); visitCount.innerText=`(${data.length})`; } }
+loadVisits(); loadJobs();
 </script>
 </body>
 </html>
