@@ -1,112 +1,46 @@
-<!DOCTYPE html>
+15<!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RepairDesk Global - Pro</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IMEI Checker</title>
 <style>
-body{background:#0a0a0f;color:white;font-family:system-ui;padding:15px;margin:0}
-.card{background:#17171f;border:1px solid #2a2a3a;border-radius:14px;padding:15px;margin-bottom:15px}
-input,select{width:100%;padding:12px;margin:6px 0;border-radius:10px;background:#0f0f17;border:1px solid #333;color:white;box-sizing:border-box}
-button{padding:12px;border-radius:10px;border:none;font-weight:bold;cursor:pointer}
-.gold{background:linear-gradient(135deg,#1a1a00,#332a00);border:1px solid #665500}
-.blue{background:#4f46e5;color:white;width:100%;margin-top:10px}
-.orange{background:#f59e0b;color:black}
-.green{background:#16a34a;color:white;width:100%}
-.profit{color:#22c55e;font-weight:bold;margin:8px 0}
-.tab{display:flex;gap:8px;margin-bottom:12px}
-.tab button{flex:1;background:#222;color:#888}
-.tab button.active{background:#4f46e5;color:white}
+body{background:#000;color:#fff;font-family:system-ui;padding:12px}
+.box{background:#111;border:1px solid #333;border-radius:16px;padding:16px;margin-top:20px}
+input{width:100%;padding:14px;border-radius:10px;border:none;background:#222;color:#fff;font-size:18px;letter-spacing:2px;text-align:center;box-sizing:border-box}
+button{width:100%;padding:14px;margin-top:12px;border-radius:10px;border:none;background:#22c55e;color:#000;font-weight:900;font-size:16px}
+.result{margin-top:14px;padding:12px;border-radius:10px;text-align:center;font-weight:700;display:none}
+.ok{background:#14532d;color:#86efac;display:block}
+.bad{background:#7f1d1d;color:#fca5a5;display:block}
+small{color:#888}
 </style>
 </head>
 <body>
-<h2>🔧 RepairDesk Global PRO</h2>
-
-<div class="card gold">
-  🔔 <b>Live Visits</b> <span id="visitCount"></span>
-  <div id="visits" style="margin-top:8px;font-size:12px;color:#aaa"></div>
-</div>
-
-<div class="tab">
-  <button id="btnJob" class="active" onclick="showTab('job')">Add Job</button>
-  <button id="btnCheck" onclick="showTab('check')">iCloud / FRP Check</button>
-</div>
-
-<div id="tab-job" class="card">
-  <h3>Add Job + Auto Profit</h3>
-  <input id="customer" placeholder="Customer Name">
-  <input id="phone" placeholder="Phone">
-  <input id="model" placeholder="Model e.g iPhone 12">
-  <input id="imei" placeholder="IMEI (for iCloud check)">
-  <div style="display:flex;gap:8px">
-    <select id="issue"><option>FRP Lock</option><option>iCloud Lock</option><option>Screen</option><option>Battery</option><option>Unlock</option></select>
-    <select id="status"><option>Received</option><option>Repairing</option><option>Ready</option><option>Delivered</option></select>
-  </div>
-  <div style="display:flex;gap:8px">
-    <input id="price" type="number" placeholder="Price $" oninput="calcProfit()">
-    <input id="cost" type="number" placeholder="Cost $" oninput="calcProfit()">
-  </div>
-  <div id="profitDisplay" class="profit"></div>
-  <button class="blue" onclick="addJob()">+ Add Job</button>
-</div>
-
-<div id="tab-check" class="card" style="display:none">
-  <h3>🔓 Free iCloud & FRP Check</h3>
-  <input id="checkImei" placeholder="Enter IMEI - dial *#06#">
-  <div id="checkResult" style="margin:10px 0"></div>
-  <button class="orange" onclick="doCheck('icloud')">Check iCloud ON/OFF (iFree)</button>
-  <button class="blue" style="margin-top:6px" onclick="doCheck('frp')">Check FRP / Model</button>
-  <button class="green" style="margin-top:6px" onclick="doCheck('full')">Full Check (All Links)</button>
-  <p style="color:#666;font-size:11px;margin-top:10px">This uses iFree free check + IMEI.info - No API key needed</p>
-</div>
-
-<div class="card">
-  <input id="search" placeholder="🔍 Search jobs..." oninput="searchJobs()">
-  <div id="jobsList" style="margin-top:10px"></div>
+<h2>project-1</h2>
+<p>IMEI checker - Offline Tool</p>
+<div class="box">
+<input id="imei" placeholder="Enter 15-digit IMEI" maxlength="15" inputmode="numeric">
+<button onclick="check()">CHECK IMEI</button>
+<div id="res" class="result"></div>
+<small>• Checks Luhn algorithm only<br>• Does not unlock or bypass anything</small>
 </div>
 
 <script>
-// KEEP YOUR OLD KEYS - COPY FROM YOUR OLD FILE!
-const supabaseUrl = 'https://YOUR_OLD_URL.supabase.co'; 
-const supabaseKey = 'YOUR_OLD_ANON_KEY';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-function showTab(t){
-  document.getElementById('tab-job').style.display = t=='job'?'block':'none';
-  document.getElementById('tab-check').style.display = t=='check'?'block':'none';
-  document.getElementById('btnJob').className = t=='job'?'active':'';
-  document.getElementById('btnCheck').className = t=='check'?'active':'';
+function luhnCheck(num){
+ let sum=0;
+ for(let i=0;i<15;i++){
+  let d=parseInt(num[14-i]);
+  if(i%2==1){d*=2; if(d>9)d-=9;}
+  sum+=d;
+ }
+ return sum%10==0;
 }
-function calcProfit(){
-  const p=parseFloat(price.value)||0,c=parseFloat(cost.value)||0;
-  profitDisplay.innerText = p?`Profit: $${(p-c).toFixed(2)} | Margin: ${p?((p-c)/p*100).toFixed(0):0}%`:'';
+function check(){
+ const v=document.getElementById('imei').value.trim();
+ const r=document.getElementById('res');
+ if(!/^\d{15}$/.test(v)){ r.className='result bad'; r.textContent='❌ Invalid: Must be 15 digits'; return;}
+ if(luhnCheck(v)){ r.className='result ok'; r.textContent='✅ Valid IMEI format';}
+ else{ r.className='result bad'; r.textContent='❌ Invalid IMEI (Luhn failed)';}
 }
-function doCheck(type){
-  const imei = (document.getElementById('checkImei').value || document.getElementById('imei').value).trim();
-  if(imei.length<15) return alert('Enter 15-digit IMEI');
-  let html = `<div style="background:#111;padding:12px;border-radius:8px;border-left:3px solid #f59e0b"><b>IMEI: ${imei}</b><br><br>`;
-  if(type=='icloud' || type=='full'){
-    html += `🔓 <a href="https://ifreeicloud.co.uk/free-check/${imei}" target="_blank" style="color:#f59e0b;font-weight:bold">iCloud ON/OFF Result (iFree) →</a><br><small>ON=Locked, OFF=Clean</small><br><br>`;
-  }
-  if(type=='frp' || type=='full'){
-    html += `📱 <a href="https://imei.info/?imei=${imei}" target="_blank" style="color:#60a5fa">Check Model + FRP Info →</a><br><br>`;
-    html += `🔍 <a href="https://www.imei.org/?imei=${imei}" target="_blank" style="color:#a78bfa">Second Check →</a><br>`;
-  }
-  html+=`</div>`;
-  document.getElementById('checkResult').innerHTML=html;
-  supabase.from('visits').insert([{email:`CHECK-${type}-${imei}`, created_at:new Date()}]);
-}
-async function addJob(){ /* your old addJob code - keep same logic */ 
-  const job={customer:customer.value,phone:phone.value,model:model.value,imei:imei.value||checkImei.value,issue:issue.value,status:status.value,price:parseFloat(price.value)||0,cost:parseFloat(cost.value)||0,profit:(parseFloat(price.value)||0)-(parseFloat(cost.value)||0)};
-  if(!job.customer) return alert('Need customer');
-  const {error}=await supabase.from('jobs').insert([job]); if(error) alert(error.message); else{alert('Job Added!'); loadJobs();}
-}
-async function loadJobs(){ const {data}=await supabase.from('jobs').select('*').order('created_at',{ascending:false}).limit(30); if(data) renderJobs(data); }
-function renderJobs(data){ jobsList.innerHTML=data.map(j=>`<div style="background:#111;padding:10px;border-radius:8px;margin-bottom:6px;border-left:3px solid ${j.status=='Delivered'?'#22c55e':'#f59e0b'}"><b>${j.customer}</b> - ${j.model} <small>(${j.status})</small><br><small>${j.phone} | ${j.issue} | IMEI:${j.imei||''} | Profit:$${j.profit}</small></div>`).join(''); }
-async function searchJobs(){ const q=search.value.toLowerCase(); const {data}=await supabase.from('jobs').select('*'); if(data) renderJobs(data.filter(j=>JSON.stringify(j).toLowerCase().includes(q))); }
-async function loadVisits(){ const {data}=await supabase.from('visits').select('*').order('created_at',{ascending:false}).limit(10); if(data){ visits.innerHTML=data.map(v=>`• ${v.email} - ${new Date(v.created_at).toLocaleString()}`).join('<br>'); visitCount.innerText=`(${data.length})`; } }
-loadVisits(); loadJobs();
 </script>
 </body>
 </html>
