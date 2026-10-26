@@ -4,134 +4,69 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="google-site-verification" content="5ZYX28dn7MoreUZg6hFdFnG0AqjyeCayELTGD-C71mo" />
-<meta name="description" content="Free Offline IMEI Checker with AI Assistant - Validate, detect brand, offline TAC lookup Ghana">
-<title>IMEI Checker Pro + AI - Offline Tool</title>
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiSU1FSSBDaGVja2VyIFBybyIsInNob3J0X25hbWUiOiJJTU5FIENoZWNrZXIiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBhMGEwYSJ9">
+<meta name="description" content="IMEI Pro Check - Offline IMEI Checker with Secure Location">
+<meta name="theme-color" content="#6366f1">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.png">
+<title>IMEI Pro Check</title>
 <style>
-:root{--bg:#0a0a0a;--card:#1e1e1e;--green:#22c55e;--border:#333}
-body{background:var(--bg);color:white;font-family:Arial;margin:0;padding:12px}
-.header{display:flex;justify-content:space-between;align-items:center}
-h2{margin:5px 0}
-.box{background:var(--card);padding:15px;border-radius:14px;border:1px solid var(--border);margin-top:12px}
-input,textarea{width:100%;padding:14px;border-radius:10px;border:none;background:#2a2a2a;color:white;font-size:16px;box-sizing:border-box}
-button{padding:12px 14px;border-radius:10px;border:none;background:var(--green);color:#000;font-weight:bold;cursor:pointer;margin-top:8px}
-button.sec{background:#333;color:#fff}
-.result{margin-top:10px;padding:12px;border-radius:10px;display:none;font-weight:bold}
-.valid{background:#14532d;color:#bbf7d0;display:block}
-.invalid{background:#7f1d1d;color:#fecaca;display:block}
-.tag{display:inline-block;background:#2a2a2a;padding:5px 10px;border-radius:20px;margin:3px;font-size:12px;border:1px solid #444}
-.ai-msg{background:#2a2a2a;padding:10px;border-radius:10px;margin:8px 0}
-.ai-user{background:#1a3a2a;text-align:right}
-small{color:#999;line-height:1.6}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto}
+body{background:#0a0e1a;color:#e2e8f0;min-height:100vh;overflow-x:hidden}
+.bg-glow{position:fixed;width:600px;height:600px;border-radius:50%;filter:blur(120px);opacity:.3;z-index:-1;animation:float 8s infinite ease-in-out}
+.g1{background:#6366f1;top:-200px;left:-200px}.g2{background:#06b6d4;bottom:-200px;right:-200px;animation-delay:-4s}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,40px)}}
+.container{max-width:520px;margin:auto;padding:18px}
+.header{padding:30px 0 20px;text-align:center;animation:fadeIn .8s}
+.header h1{font-size:28px;font-weight:800;background:linear-gradient(90deg,#818cf8,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:#94a3b8;margin-top:6px;font-size:14px}
+.card{background:rgba(30,41,59,.6);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:20px;margin-bottom:16px;animation:slideUp .6s ease;transition:.3s}
+.card:hover{border-color:rgba(99,102,241,.4);transform:translateY(-2px)}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+input{width:100%;padding:18px 16px;border-radius:14px;border:2px solid #1e293b;background:#0f172a;color:white;font-size:18px;letter-spacing:3px;text-align:center;outline:none;transition:.3s}
+input:focus{border-color:#6366f1;box-shadow:0 0 0 4px rgba(99,102,241,.2)}
+.btn-main{width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(90deg,#6366f1,#06b6d4);color:white;font-weight:800;font-size:15px;margin-top:12px;cursor:pointer}
+.btn-row{display:flex;gap:8px;margin-top:10px}
+.btn-sec{flex:1;padding:12px;border-radius:12px;border:1px solid #334155;background:#1e293b;color:#94a3b8;font-weight:600;cursor:pointer}
+.result{margin-top:14px;padding:14px;border-radius:12px;text-align:center;font-weight:700;display:none;animation:pop .4s}
+@keyframes pop{0%{transform:scale(.9)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+.valid{display:block;background:linear-gradient(90deg,#052e1a,#065f46);color:#6ee7b7;border:1px solid #10b981}
+.invalid{display:block;background:linear-gradient(90deg,#3f0a0a,#7f1d1d);color:#fca5a5;border:1px solid #ef4444}
+.info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.chip{background:#0f172a;border:1px solid #1e293b;padding:8px;border-radius:30px;font-size:12px;text-align:center;color:#94a3b8}
+.ai-chat{max-height:180px;overflow-y:auto;margin:12px 0}
+.ai-msg{background:#0f172a;padding:10px 14px;border-radius:14px;margin:6px 0;font-size:14px;border:1px solid #1e293b}
+.ai-user{background:linear-gradient(90deg,#6366f1,#4f46e5);color:white;margin-left:30px;border:none}
+.ai-bot{margin-right:30px}
+.pulse{animation:pulse 2s infinite}@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(99,102,241,.4)}70%{box-shadow:0 0 0 10px rgba(99,102,241,0)}100%{box-shadow:0 0 0 0 rgba(99,102,241,0)}}
 </style>
 </head>
 <body>
-<div class="header">
-<div>
-<h2>project-1 Pro</h2>
-<small>Offline IMEI Checker + AI Assistant</small>
-</div>
-<button class="sec" onclick="document.getElementById('aiBox').scrollIntoView({behavior:'smooth'})">AI Help</button>
-</div>
-
-<div class="box">
-<input id="imei" type="text" inputmode="numeric" placeholder="Enter 15-digit IMEI" maxlength="15" oninput="autoCheck()">
-<div class="grid">
-<button onclick="checkIMEI()">CHECK IMEI</button>
-<button class="sec" onclick="copyIMEI()">COPY</button>
-</div>
+<div class="bg-glow g1"></div><div class="bg-glow g2"></div>
+<div class="container">
+<div class="header"><h1>📍🔐 IMEI Pro Check</h1><p>Offline • Secure • AI Powered</p></div>
+<div class="card">
+<input id="imei" type="text" inputmode="numeric" maxlength="15" placeholder="Enter 15 digit IMEI" oninput="autoCheck()">
+<button class="btn-main pulse" onclick="checkIMEI()">CHECK IMEI</button>
+<div class="btn-row"><button class="btn-sec" onclick="copyIMEI()">📋 Copy</button><button class="btn-sec" onclick="shareIMEI()">↗ Share</button><button class="btn-sec" onclick="clearAll()">Clear</button></div>
 <div id="result" class="result"></div>
-<div id="details" style="margin-top:10px"></div>
-<div style="margin-top:8px">
-<span class="tag" id="brandTag">Brand: Unknown</span>
-<span class="tag" id="tacTag">TAC: -</span>
-<span class="tag" id="typeTag">Type: -</span>
+<div class="info-grid"><div class="chip" id="brand">Brand: —</div><div class="chip" id="tac">TAC: —</div><div class="chip" id="valid">Status: —</div></div>
 </div>
-<small style="margin-top:10px">• Luhn algorithm only • 100% offline • No data sent to server</small>
+<div class="card"><h3>🔢 Check Digit</h3><input id="imei14" style="font-size:15px;letter-spacing:1px" placeholder="First 14 digits" maxlength="14"><button class="btn-main" style="background:linear-gradient(90deg,#0ea5e9,#6366f1)" onclick="calcCheck()">Calculate</button><div id="calcRes" class="result"></div></div>
+<div class="card"><h3>🤖 AI <span style="font-size:11px;background:#6366f1;padding:3px 8px;border-radius:20px">OFFLINE</span></h3><div id="aiChat" class="ai-chat"><div class="ai-msg ai-bot">Hi 👋 I can explain TAC, blocking in Ghana, tracking...</div></div><div style="display:flex;gap:8px"><input id="aiInput" style="font-size:14px;letter-spacing:0;text-align:left" placeholder="Ask..."><button class="btn-sec" style="flex:none;padding:0 20px;background:#6366f1;color:white;border:none" onclick="askAI()">➤</button></div></div>
 </div>
-
-<div class="box">
-<h3>Check Digit Calculator</h3>
-<input id="imei14" placeholder="Enter first 14 digits" maxlength="14">
-<button onclick="calcCheck()">Calculate 15th Digit</button>
-<div id="calcRes" class="result"></div>
-</div>
-
-<div class="box" id="aiBox">
-<h3>🤖 Offline AI Assistant</h3>
-<small>Ask anything about IMEI - works offline, no internet needed</small>
-<div id="aiChat" style="max-height:220px;overflow-y:auto;margin:10px 0">
-<div class="ai-msg">Hi! I'm your offline IMEI assistant. Ask me e.g. "What is IMEI?" or "Can IMEI be tracked?"</div>
-</div>
-<div style="display:flex;gap:6px">
-<input id="aiInput" placeholder="Ask about IMEI...">
-<button onclick="askAI()">Send</button>
-</div>
-<div style="margin-top:8px">
-<button class="sec" onclick="quickQ('What is IMEI?')">What is IMEI?</button>
-<button class="sec" onclick="quickQ('Is my IMEI valid?')">Is valid?</button>
-<button class="sec" onclick="quickQ('Can IMEI be blocked?')">Blocked?</button>
-</div>
-</div>
-
 <script>
-// TAC small DB - Ghana common
-const TAC_DB={"35":{"3555":"Samsung","3567":"iPhone","3549":"Tecno","3590":"Infinix","3559":"Itel","3534":"Nokia","3572":"Xiaomi"}};
-function getBrand(imei){
-  let tac=imei.substring(0,8);
-  let t2=imei.substring(0,4);
-  for(let k in TAC_DB){ if(imei.startsWith(k)){ for(let t in TAC_DB[k]){ if(imei.startsWith(t)) return TAC_DB[k][t]; } } }
-  return "Unknown (TAC "+tac+")";
-}
-function autoCheck(){ if(document.getElementById('imei').value.length===15) checkIMEI(); }
-function checkIMEI(){
- const imei=document.getElementById('imei').value.trim();
- const res=document.getElementById('result');
- const det=document.getElementById('details');
- res.style.display='block';
- if(!/^\d{15}$/.test(imei)){ res.className='result invalid'; res.textContent='❌ Must be 15 digits'; return; }
- let sum=0; for(let i=0;i<15;i++){ let d=parseInt(imei[i]); if((15-i)%2===0){d*=2; if(d>9)d-=9;} sum+=d; }
- let valid=sum%10===0;
- res.className='result '+(valid?'valid':'invalid');
- res.textContent=valid?'✅ Valid IMEI - Luhn passed':'❌ Invalid IMEI - Luhn failed';
- document.getElementById('brandTag').textContent='Brand: '+getBrand(imei);
- document.getElementById('tacTag').textContent='TAC: '+imei.substring(0,8);
- document.getElementById('typeTag').textContent='Valid: '+(valid?'Yes':'No');
- det.innerHTML=valid?`<small>Model TAC ${imei.substring(0,8)} can be checked with manufacturer database. This tool only validates structure offline.</small>`:'';
- localStorage.setItem('lastIMEI',imei);
-}
-function copyIMEI(){ navigator.clipboard.writeText(document.getElementById('imei').value); alert('Copied!'); }
-function calcCheck(){
- let v=document.getElementById('imei14').value.trim();
- let r=document.getElementById('calcRes');
- if(!/^\d{14}$/.test(v)){ r.className='result invalid'; r.textContent='Enter 14 digits'; r.style.display='block'; return; }
- let sum=0; for(let i=0;i<14;i++){ let d=parseInt(v[i]); if((14-i+1)%2===0){d*=2; if(d>9)d-=9;} sum+=d; }
- let check=(10-(sum%10))%10;
- r.className='result valid'; r.style.display='block'; r.textContent='Full IMEI: '+v+check+' (Check digit: '+check+')';
-}
-
-// Offline AI - rule based
-function askAI(){
- let q=document.getElementById('aiInput').value.trim();
- if(!q) return;
- addMsg(q,'ai-user');
- document.getElementById('aiInput').value='';
- setTimeout(()=>{ addMsg(getAIResponse(q),''); },400);
-}
-function quickQ(t){ document.getElementById('aiInput').value=t; askAI(); }
-function addMsg(text,cls){ let d=document.createElement('div'); d.className='ai-msg '+cls; d.textContent=text; document.getElementById('aiChat').appendChild(d); document.getElementById('aiChat').scrollTop=9999; }
-function getAIResponse(q){
- q=q.toLowerCase();
- if(q.includes('what is imei')) return 'IMEI is International Mobile Equipment Identity - unique 15-digit number for every phone. TAC (first 8 digits) = model, next 6 = serial, last 1 = check digit using Luhn algorithm.';
- if(q.includes('valid') || q.includes('check')) return 'A valid IMEI must be 15 digits and pass Luhn checksum. My tool above checks it offline. If Luhn fails, IMEI is fake or mistyped.';
- if(q.includes('block') || q.includes('stolen')) return 'Yes, carriers in Ghana (MTN, Vodafone, AirtelTigo) can block IMEI via EIR if phone is reported stolen. Valid IMEI is needed for blocking to work.';
- if(q.includes('track') || q.includes('locate')) return 'IMEI alone cannot track live location. It can only identify device on network. Tracking needs carrier cooperation or Find My iPhone / Google Find My Device.';
- if(q.includes('change') || q.includes('clone')) return 'Changing IMEI is illegal in many countries including Ghana. This tool does NOT change IMEI, only checks validity.';
- if(q.includes('tac') || q.includes('brand')) return 'TAC = Type Allocation Code, first 8 digits of IMEI. It tells brand/model. My offline DB detects common Ghana brands like Tecno, Infinix, Samsung, iPhone.';
- return 'I am offline AI. I can help with: What is IMEI, Is my IMEI valid, Can IMEI be blocked/tracked, What is TAC, Can IMEI be changed. Ask one of those!';
-}
-document.getElementById('aiInput').addEventListener('keypress',e=>{ if(e.key==='Enter') askAI(); });
+function getBrand(i){return i.startsWith("35")?"Android Device":"Unknown"}
+function autoCheck(){if(document.getElementById('imei').value.length===15)checkIMEI()}
+function checkIMEI(){let imei=document.getElementById('imei').value.trim(),res=document.getElementById('result');if(!/^\d{15}$/.test(imei)){res.className='result invalid';res.style.display='block';res.textContent='❌ Need 15 digits';return}let sum=0;for(let i=0;i<15;i++){let d=+imei[i];if((15-i)%2===0){d*=2;if(d>9)d-=9}sum+=d}let ok=sum%10===0;res.className='result '+(ok?'valid':'invalid');res.style.display='block';res.textContent=ok?'✅ Valid • Luhn Passed':'❌ Invalid';document.getElementById('brand').textContent='Brand: '+getBrand(imei);document.getElementById('tac').textContent='TAC: '+imei.slice(0,8);document.getElementById('valid').textContent='Status: '+(ok?'Valid':'Invalid');navigator.vibrate&&navigator.vibrate(50)}
+function copyIMEI(){navigator.clipboard.writeText(document.getElementById('imei').value)}
+function shareIMEI(){if(navigator.share)navigator.share({title:'IMEI',text:document.getElementById('imei').value})}
+function clearAll(){document.getElementById('imei').value='';document.getElementById('result').style.display='none'}
+function calcCheck(){let v=document.getElementById('imei14').value.trim(),r=document.getElementById('calcRes');if(!/^\d{14}$/.test(v)){r.className='result invalid';r.style.display='block';r.textContent='Enter 14 digits';return}let s=0;for(let i=0;i<14;i++){let d=+v[i];if((14-i+1)%2===0){d*=2;if(d>9)d-=9}s+=d}let c=(10-(s%10))%10;r.className='result valid';r.style.display='block';r.textContent='Full: '+v+c+' • Check: '+c}
+function askAI(){let q=document.getElementById('aiInput').value.trim();if(!q)return;addMsg(q,'ai-user');document.getElementById('aiInput').value='';setTimeout(()=>addMsg(aiAns(q),'ai-bot'),300)}
+function addMsg(t,cls){let d=document.createElement('div');d.className='ai-msg '+cls;d.textContent=t;let c=document.getElementById('aiChat');c.appendChild(d);c.scrollTop=9999}
+function aiAns(q){q=q.toLowerCase();if(q.includes('imei'))return'TAC 8 + Serial 6 + Check 1 = 15 digits. Unique hardware ID.';if(q.includes('tac'))return'TAC = first 8 digits, shows brand/model.';if(q.includes('block')||q.includes('ghana'))return'Report to MTN/Vodafone/AirtelTigo with police report to block IMEI via EIR.';if(q.includes('track'))return'IMEI cant give GPS. Use Find My iPhone / Google Find My.';return'Ask about IMEI, TAC, blocking, tracking.'}
+document.getElementById('aiInput').addEventListener('keypress',e=>e.key==='Enter'&&askAI());
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js')}
 </script>
 </body>
 </html>
